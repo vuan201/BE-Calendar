@@ -1,18 +1,41 @@
-var builder = WebApplication.CreateBuilder(args);
+using Domain.ValueObjects;
+using Infrastructure;
 
-// Add services to the container.
+var builder = WebApplication.CreateBuilder(args);
+var appSetting = builder.Configuration.GetSection("appsetting").Get<AppSetting>();
+var baseAccount = builder.Configuration.GetSection("BaseAccount").Get<BaseAccount>();
+
+// Thêm dịch vụ vào container.
+
+// Đăng ký database
+builder.Services.RegisterDb(builder.Configuration, appSetting);
+
+// Thêm Dependency Injection
+builder.Services.AddDependencyInjection();
+
+// Thêm Auto Mapper.
+builder.Services.AddAutoMapperConfiguration();
+
+// Thêm các repository.
+builder.Services.AddRepositories();
 
 builder.Services.AddControllers();
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// Tìm hiểu thêm về cách cấu hình OpenAPI tại https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.AutoMigrations().GetAwaiter().GetResult();
+
+app.SeedData(builder.Configuration, baseAccount).GetAwaiter().GetResult();
+
+// Cấu hình đường dẫn HTTP request.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+
+    // Sử dụng Swagger UI để xem API.
     app.UseSwaggerUi(options =>
     {
         options.DocumentPath = "/openapi/v1.json";
