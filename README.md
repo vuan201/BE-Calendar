@@ -11,7 +11,7 @@
    dotnet restore
    ```
 2. **Tạo tệp cấu hình ứng dụng**
-   Tạo hoặc cập nhật `Api/appsettings.json` với chuỗi kết nối SQL Server của bạn.
+   Tạo hoặc cập nhật `Api/appsettings.json` và `Api/appsettings.Development.json` với chuỗi kết nối SQL Server của bạn.
    ```json
    {
      "AppSetting": {
