@@ -12,8 +12,4 @@ public class ApplicationUser : IdentityUser
     [StringLength(500)]
     public string Address { get; set; } = string.Empty;
     public bool IsActive { get; set; }
-    // public int? AvatarId { get; set; }
-
-    // [ForeignKey(nameof(AvatarId))]
-    // public virtual Files? Avatar { get; set; }
 }

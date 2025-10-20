@@ -1,32 +1,16 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using Domain.Enums.Event;
-using Microsoft.EntityFrameworkCore;
 
-namespace Domain.Entities;
+namespace Application.DTOs;
 
-[Table("Events")]
-// [Index(nameof(Id))]
-public class Event : EntityBase
+public class EventDTO
 {
-    [Key]
     public int Id { get; set; }
     public string? UserId { get; set; }
-    [ForeignKey(nameof(UserId))]
-    public virtual ApplicationUser? User { get; set; }
-    [Required]
-    [StringLength(128)]
     public string Title { get; set; } = string.Empty;
-    [StringLength(640)]
     public string Description { get; set; } = string.Empty;
-    [Required]
     public Priolity Priolity { get; set; } = Priolity.Default;
-    [Required]
     public EventType EventType { get; set; } = EventType.Meeting;
-    [Required]
     public string RecurrenceRule { get; set; } = string.Empty;
-    [Required]
     public DateTime StartDate { get; set; }
-    [Required]
     public DateTime EndDate { get; set; }
 }

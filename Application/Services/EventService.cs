@@ -1,5 +1,6 @@
+using Application.DTOs;
 using Application.Interfaces;
-using Domain.Entities;
+using AutoMapper;
 using Domain.Interfaces;
 
 namespace Application.Services;
@@ -7,15 +8,17 @@ namespace Application.Services;
 public class EventService : IEventService
 {
     private readonly IEventRepository _eventRepository;
+    private readonly IMapper _mapper;
 
-    public EventService(IEventRepository eventRepository)
+    public EventService(IEventRepository eventRepository, IMapper mapper)
     {
+        _mapper = mapper;
         _eventRepository = eventRepository;
     }
-    public async Task<List<Event>> GetEventsAsync()
+    public async Task<List<EventDTO>> GetEventsAsync()
     {
         var result = await _eventRepository.GetListAsync();
 
-        return result.ToList();
+        return _mapper.Map<List<EventDTO>>(result);
     }
 }

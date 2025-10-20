@@ -1,8 +1,8 @@
-using Domain.Entities;
+using Application.DTOs;
 
 namespace Application.Interfaces;
 
 public interface IEventService
 {
-    Task<List<Event>> GetEventsAsync();
+    Task<List<EventDTO>> GetEventsAsync();
 }
