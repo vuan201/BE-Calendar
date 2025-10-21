@@ -1,4 +1,6 @@
+using Application.DTOs.EventDTO;
 using Application.Interfaces;
+using Application.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -14,13 +16,44 @@ public class EventController : ControllerBase
     }
 
     [HttpGet(Name = "GetEvent")]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get([FromQuery] int id)
     {
-        var result = await _eventService.GetEventsAsync();
-        if (result != null)
+        var result = await _eventService.GetEventByIdAsync(id);
+        if (result.Status)
         {
             return Ok(result);
         }
-        return NotFound();
+        return NotFound(result);
+    }
+    [HttpGet(Name = "GetEvents")]
+    public async Task<IActionResult> Get()
+    {
+        var result = await _eventService.GetEventsAsync();
+        if (result.Status)
+        {
+            return Ok(result);
+        }
+        return NotFound(result);
+    }
+    [HttpPost(Name = "CreateEvent")]
+    public async Task<IActionResult> Post([FromBody] CreateEventDTO data)
+    {
+        var result = await _eventService.CreateEventAsync(data);
+        if (result.Status)
+        {
+            return CreatedAtRoute(nameof(Get), result.Data);
+        }
+        return BadRequest(result);
+    }
+    [HttpDelete(Name = "DeleteEvent")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var result = await _eventService.DeleteEventAsync(id);
+
+        if (result.Status)
+        {
+            return Ok(result);
+        }
+        return BadRequest(result);
     }
 }

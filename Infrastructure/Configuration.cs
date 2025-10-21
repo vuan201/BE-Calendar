@@ -1,4 +1,3 @@
-using System.Configuration;
 using System.Reflection;
 using Application.Interfaces;
 using Application.Mappings;
@@ -20,13 +19,13 @@ namespace Infrastructure;
 public static class Configuration
 {
     // Đăng ký DbContext và cấu hình kết nối cơ sở dữ liệu
-    public static void RegisterDb(this IServiceCollection service, IConfiguration confix, AppSetting appSetting)
+    public static void RegisterDb(this IServiceCollection service, IConfiguration confix, AppSetting? appSetting)
     {
         // Đăng ký DbContext và cấu hình kết nối cơ sở dữ liệu
         service.AddDbContext<ApplicationDbContext>(options =>
         {
             // Sử dụng SqlServer với chuỗi kết nối và phiên bản của SqlServerServerVersion
-            options.UseSqlServer(appSetting.Connections?.SqlServerConnectionString);
+            options.UseSqlServer(appSetting?.Connections?.SqlServerConnectionString);
 
             // Cho phép sử dụng lazy loading proxies để tải các đối tượng liên quan 
             options.UseLazyLoadingProxies();
