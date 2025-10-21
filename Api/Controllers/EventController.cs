@@ -15,8 +15,8 @@ public class EventController : ControllerBase
         _eventService = eventService;
     }
 
-    [HttpGet(Name = "GetEvent")]
-    public async Task<IActionResult> Get([FromQuery] int id)
+    [HttpGet("{id}",Name = "GetEvent")]
+    public async Task<IActionResult> Get(int id)
     {
         var result = await _eventService.GetEventByIdAsync(id);
         if (result.Status)
