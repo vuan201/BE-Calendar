@@ -1,6 +1,7 @@
 using Application.DTOs.EventDTO;
 using Application.Interfaces;
 using Application.Models;
+using Application.Models.Queries;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
@@ -26,9 +27,9 @@ public class EventController : ControllerBase
         return NotFound(result);
     }
     [HttpGet(Name = "GetEvents")]
-    public async Task<IActionResult> Get()
+    public async Task<IActionResult> Get([FromQuery] EventFormQuery query)
     {
-        var result = await _eventService.GetEventsAsync();
+        var result = await _eventService.GetEventsAsync(query);
         if (result.Status)
         {
             return Ok(result);

@@ -1,10 +1,14 @@
-﻿using Application.DTOs.EventDTO;
+﻿using System.Linq.Expressions;
+using Application.DTOs.EventDTO;
 using Application.Interfaces;
 using Application.Models;
+using Application.Models.Queries;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Interfaces;
 using Ical.Net;
+using LinqKit;
+
 namespace Application.Services;
 
 public class EventService : IEventService
@@ -82,9 +86,47 @@ public class EventService : IEventService
         return new ViewModel<EventDTO> { Status = false, Message = "Data does not exist" };
     }
 
-    public async Task<ViewModel<List<EventDTO>>> GetEventsAsync()
+    public async Task<ViewModel<List<EventDTO>>> GetEventsAsync(EventFormQuery query)
     {
-        var result = await _eventRepository.GetListAsync();
+        // Lọc dữ liệu theo các điều kiện được truyền vào
+        var filter = PredicateBuilder.New<Event>(true);
+
+        if (query.FormDate.HasValue || query.ToDate.HasValue)
+        {
+            // Chỉ lấy giờ UTC
+            if (query.FormDate.HasValue && query.FormDate.Value.Kind != DateTimeKind.Utc)
+            {
+                filter.And(e => e.StartDate >= query.FormDate!.Value.ToUniversalTime());
+            }
+            else if(query.ToDate.HasValue && query.ToDate.Value.Kind != DateTimeKind.Utc)
+            {
+                filter.And(e => e.EndDate <= query.ToDate!.Value);
+            }
+            return new ViewModel<List<EventDTO>>
+            {
+                Message = "Please use UTC date and time for the form and to dates.",
+                Status = false,
+                Count = 0
+            };
+        }
+        if (!string.IsNullOrEmpty(query.Title))
+        {
+            filter.And(e => e.Title.Contains(query.Title));
+        }
+        if (query.EventType.HasValue)
+        {
+            filter.And(e => e.EventType == query.EventType);
+        }
+        if (query.Priolity.HasValue)
+        {
+            filter.And(e => e.Priolity == query.Priolity);
+        }
+        if (!query.IsRecurrenceRule)
+        {
+            filter.And(e => string.IsNullOrEmpty(e.RecurrenceRule));
+        }
+
+        var result = await _eventRepository.GetListAsync(filter);
         if (result is not null)
         {
             return new ViewModel<List<EventDTO>>
