@@ -35,24 +35,14 @@ public class EventService : IEventService
                     await _eventRepository.CreateAsync(newEvent);
                     await _eventRepository.SaveChangesAsync();
 
-                    return new ViewModel<EventDTO>
-                    {
-                        Data = _mapper.Map<EventDTO>(newEvent),
-                        Message = "Event created successfully.",
-                        Status = true,
-                        Count = 1
-                    };
+                    return new ViewModel<EventDTO>(true, "Event created successfully.", _mapper.Map<EventDTO>(newEvent), 1);
                 }
                 throw new Exception("Invalid recurrence rule format.");
             }
         }
         catch (Exception ex)
         {
-            return new ViewModel<EventDTO>
-            {
-                Message = ex.Message,
-                Status = false,
-            };
+            return new ViewModel<EventDTO>(false, ex.Message);
         }
     }
 
@@ -64,10 +54,10 @@ public class EventService : IEventService
         {
             _eventRepository.Delete(oldEvent);
             await _eventRepository.SaveChangesAsync();
-            return new ViewModel { Status = true, Message = "Delete event success" };
+            return new ViewModel(true, "Delete event success");
         }
 
-        return new ViewModel { Status = false, Message = "Delete event failed" };
+        return new ViewModel(false, "Delete event failed");
     }
 
     public async Task<ViewModel<EventDTO>> GetEventByIdAsync(int id)
@@ -75,39 +65,27 @@ public class EventService : IEventService
         var result = await _eventRepository.GetAsync(i => i.Id == id);
         if (result is not null)
         {
-            return new ViewModel<EventDTO>
-            {
-                Data = _mapper.Map<EventDTO>(result),
-                Message = "Get data success",
-                Status = true,
-                Count = 1
-            };
+            return new ViewModel<EventDTO>(true, "Get data success", _mapper.Map<EventDTO>(result), 1);
         }
-        return new ViewModel<EventDTO> { Status = false, Message = "Data does not exist" };
+        return new ViewModel<EventDTO>(false, "Get data failed");
     }
 
     public async Task<ViewModel<List<EventDTO>>> GetEventsAsync(EventFormQuery query)
     {
-        // Lọc dữ liệu theo các điều kiện được truyền vào
+        // *Lọc dữ liệu theo các điều kiện được truyền vào
         var filter = PredicateBuilder.New<Event>(true);
 
         if (query.FormDate.HasValue || query.ToDate.HasValue)
         {
-            // Chỉ lấy giờ UTC
-            if (query.FormDate.HasValue && query.FormDate.Value.Kind != DateTimeKind.Utc)
+            // *Chỉ lấy giờ UTC
+            if (query.FormDate != null)
             {
-                filter.And(e => e.StartDate >= query.FormDate!.Value.ToUniversalTime());
+                filter.And(e => e.StartDate >= query.FormDate);
             }
-            else if(query.ToDate.HasValue && query.ToDate.Value.Kind != DateTimeKind.Utc)
+            if (query.ToDate != null)
             {
                 filter.And(e => e.EndDate <= query.ToDate!.Value);
             }
-            return new ViewModel<List<EventDTO>>
-            {
-                Message = "Please use UTC date and time for the form and to dates.",
-                Status = false,
-                Count = 0
-            };
         }
         if (!string.IsNullOrEmpty(query.Title))
         {
@@ -129,14 +107,8 @@ public class EventService : IEventService
         var result = await _eventRepository.GetListAsync(filter);
         if (result is not null)
         {
-            return new ViewModel<List<EventDTO>>
-            {
-                Data = _mapper.Map<List<EventDTO>>(result),
-                Message = "Get data success",
-                Status = true,
-                Count = result.Count()
-            };
+            return new ViewModel<List<EventDTO>>(true, "Get data success", _mapper.Map<List<EventDTO>>(result), result.Count());
         }
-        return new ViewModel<List<EventDTO>> { Status = false, Message = "Data does not exist" };
+        return new ViewModel<List<EventDTO>>(false, "Data does not exist");
     }
 }

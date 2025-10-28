@@ -5,8 +5,8 @@ namespace Application.Models.Queries;
 
 public class EventFormQuery
 {
-    public DateTime? FormDate { get; set; }
-    public DateTime? ToDate { get; set; }
+    public long? FormDate { get; set; }
+    public long? ToDate { get; set; }
     public string? Title { get; set; }
     public EventType? EventType { get; set; }
     public Priolity? Priolity { get; set; }

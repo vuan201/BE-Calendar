@@ -1,13 +1,13 @@
 using System.ComponentModel.DataAnnotations;
+using Domain.Extension;
 
 namespace Domain.Entities;
 
 public class EntityBase
 {
     [Required]
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
-    public DateTime? UpdatedAt { get; set; } = DateTime.Now;
+    public long CreatedAt { get; set; } = DateTime.UtcNow.ToUnixTime();
+    public long? UpdatedAt { get; set; } = DateTime.UtcNow.ToUnixTime();
     [Required]
     public bool IsDeleted { get; set; } = false;
-    public virtual IEnumerable<Event>? Events{ get; set; } 
 }

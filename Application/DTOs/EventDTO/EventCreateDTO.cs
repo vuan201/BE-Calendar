@@ -16,7 +16,7 @@ public class CreateEventDTO
     [Required]
     public string RecurrenceRule { get; set; } = string.Empty;
     [Required]
-    public DateTime StartDate { get; set; }
+    public long StartDate { get; set; }
     [Required]
-    public DateTime EndDate { get; set; }
+    public long EndDate { get; set; }
 }

@@ -11,6 +11,6 @@ public class EventDTO
     public Priolity Priolity { get; set; } = Priolity.Default;
     public EventType EventType { get; set; } = EventType.Meeting;
     public string RecurrenceRule { get; set; } = string.Empty;
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
+    public long StartDate { get; set; }
+    public long EndDate { get; set; }
 }

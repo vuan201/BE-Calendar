@@ -1,19 +1,22 @@
 using Application.DTOs.EventDTO;
 using Application.Interfaces;
-using Application.Models;
 using Application.Models.Queries;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Api.Controllers;
 
+[Authorize]
 [ApiController]
-[Route("api/[controller]")]
-public class EventController : ControllerBase
+[Route("Api/[controller]")]
+public class EventsController : ControllerBase
 {
     private readonly IEventService _eventService;
-    public EventController(IEventService eventService)
+    private readonly IUserService _userService;
+    public EventsController(IEventService eventService, IUserService userService)
     {
         _eventService = eventService;
+        _userService = userService;
     }
 
     [HttpGet("{id}",Name = "GetEvent")]
@@ -53,8 +56,8 @@ public class EventController : ControllerBase
 
         if (result.Status)
         {
-            return Ok(result);
+            return NoContent();
         }
-        return BadRequest(result);
+        return NotFound(result);
     }
 }

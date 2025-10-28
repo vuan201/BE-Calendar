@@ -14,4 +14,5 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser, IdentityR
         base.OnModelCreating(modelBuilder);
     }
     public DbSet<Event> Events { get; set; }
+    public DbSet<Token> Tokens { get;  set; }
 }

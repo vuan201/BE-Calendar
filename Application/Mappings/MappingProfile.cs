@@ -1,5 +1,7 @@
 
+using Application.DTOs.AuthDTO;
 using Application.DTOs.EventDTO;
+using Application.DTOs.UserDTO;
 using AutoMapper;
 using Domain.Entities;
 
@@ -11,5 +13,7 @@ public class MappingProfile : Profile
     {
         CreateMap<Event, EventDTO>().ReverseMap();
         CreateMap<Event, CreateEventDTO>().ReverseMap();
+        CreateMap<ApplicationUser, UserInfomationDTO>().ReverseMap();
+        CreateMap<ApplicationUser, AuthRegisterDTO>().ReverseMap();
     }
 }

@@ -1,15 +1,15 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Domain.Enums.Event;
-using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Entities;
 
 [Table("Events")]
-// [Index(nameof(Id))]
+// *[Index(nameof(Id))]
 public class Event : EntityBase
 {
     [Key]
+    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
     public string? UserId { get; set; }
     [ForeignKey(nameof(UserId))]
@@ -18,15 +18,15 @@ public class Event : EntityBase
     [StringLength(128)]
     public string Title { get; set; } = string.Empty;
     [StringLength(640)]
-    public string Description { get; set; } = string.Empty;
+    public string? Description { get; set; }
     [Required]
     public Priolity Priolity { get; set; } = Priolity.Default;
     [Required]
     public EventType EventType { get; set; } = EventType.Meeting;
     [Required]
-    public string RecurrenceRule { get; set; } = string.Empty;
+    public string? RecurrenceRule { get; set; }
     [Required]
-    public DateTime StartDate { get; set; }
+    public long StartDate { get; set; }
     [Required]
-    public DateTime EndDate { get; set; }
+    public long EndDate { get; set; }
 }

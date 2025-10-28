@@ -1,0 +1,21 @@
+POST https://localhost:7016/Api/Auth/Register
+Content-Type: application/json
+
+{
+    "UserName": "vuan201",
+    "Password": "Phagame@123",
+    "Email": "vuan201@gmail.com",
+    "PhoneNumber": "+84905678901",
+    "FirstName": "Vũ",
+    "LastName": "An",
+    "Address": "Hà nội"
+}
+
+###
+POST https://localhost:7016/Api/Auth/Login
+Content-Type: application/json
+
+{
+    "UserName": "vuan201",
+    "Password": "Phagame@123"
+}
