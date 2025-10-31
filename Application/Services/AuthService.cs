@@ -4,6 +4,7 @@ using Application.Models;
 using AutoMapper;
 using Domain.constants;
 using Domain.Entities;
+using Domain.Extension;
 using Domain.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
@@ -72,9 +73,60 @@ public class AuthService : IAuthService
         return new ViewModel(true, "Logout success");
     }
 
-    public Task<ViewModel<AuthTokenDTO>> RefreshToken(AuthTokenDTO authTokenDTO)
+    public async Task<ViewModel<AuthTokenDTO>> GetAccessToken(string refreshToken)
     {
-        throw new NotImplementedException();
+        var token = await _tokenRepository.GetTokenByValueAsync(refreshToken);
+
+        if (token == null) return new ViewModel<AuthTokenDTO>(false, "Invalid refresh token");
+        if (token.IsRevoked)
+        {
+            return new ViewModel<AuthTokenDTO>(false, "Refresh token has been revoked");
+        }
+        else if (token.ExpiresTime < DateTime.UtcNow.ToUnixTime())
+        {
+            token.IsRevoked = true;
+            await _tokenRepository.SaveChangesAsync();
+
+            return new ViewModel<AuthTokenDTO>(false, "Refresh token has expired");
+        }
+
+        // * Lấy User từ Refresh Token
+        var user = await _userManager.FindByIdAsync(token.UserId);
+
+        if (user == null) return new ViewModel<AuthTokenDTO>(false, "Error getting user from database");
+
+        // * Thu hồi token cũ và bắt đầu tạo một rotasion token
+
+        // * Thu hồi Refresh Token cũ
+        token.IsRevoked = true;
+        await _tokenRepository.SaveChangesAsync();
+
+        // *Lấy Roles và tạo Access Token
+        var userRole = await _userManager.GetRolesAsync(user);
+        var accessToken = _tokenService.CreateAccessToken(user, userRole);
+
+        // *Tạo Refresh Token và lưu vào DB (Thời gian dài)
+        var newRefreshToken = _tokenService.CreateRefreshToken();
+
+        // *Lưu Refresh Token vào DB
+        var newToken = new Token
+        {
+            UserId = user.Id,
+            TokenValue = newRefreshToken.TokenValue,
+            ExpiresTime = newRefreshToken.ExpiresTime,
+            IsRevoked = false
+        };
+
+        await _tokenRepository.CreateAsync(newToken);
+        await _tokenRepository.SaveChangesAsync();
+
+        var result = new AuthTokenDTO
+        {
+            AccessToken = accessToken,
+            RefreshToken = newRefreshToken.TokenValue,
+            ExpiresTime = newRefreshToken.ExpiresTime
+        };
+        return new ViewModel<AuthTokenDTO>(true, "Get access token success", result);
     }
 
     public async Task<ViewModel<AuthTokenDTO>> Register(AuthRegisterDTO register)

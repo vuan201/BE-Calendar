@@ -10,7 +10,8 @@ public class Token
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int Id { get; set; }
-    public string? UserId { get; set; }
+    [Required]
+    public string UserId { get; set; } = string.Empty;
     [ForeignKey(nameof(UserId))]
     public virtual ApplicationUser? User { get; set; }
     [Required]

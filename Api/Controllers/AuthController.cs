@@ -15,7 +15,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("Login", Name = "Login")]
-    public async Task<IActionResult> Post([FromBody] AuthLoginDTO login)
+    public async Task<IActionResult> Login([FromBody] AuthLoginDTO login)
     {
         var result = await _authService.Login(login);
 
@@ -24,7 +24,7 @@ public class AuthController : ControllerBase
         return Ok(result);
     }
     [HttpPost("Register", Name = "Register")]
-    public async Task<IActionResult> Post([FromBody] AuthRegisterDTO register)
+    public async Task<IActionResult> Register([FromBody] AuthRegisterDTO register)
     {
         var result = await _authService.Register(register);
 
@@ -33,12 +33,21 @@ public class AuthController : ControllerBase
         return Ok(result);
     }
     [HttpPost("Logout", Name = "Logout")]
-    public async Task<IActionResult> Post([FromHeader] AuthTokenDTO token)
+    public async Task<IActionResult> Logout([FromHeader] AuthTokenDTO token)
     {
         var result = await _authService.Logout(token);
 
         if (!result.Status) return BadRequest(result);
 
         return Ok();
+    }
+    [HttpPost("GetAccessToken", Name = "GetAccessToken")]
+    public async Task<IActionResult> GetAccessToken([FromHeader] string refreshToken)
+    {
+        var result = await _authService.GetAccessToken(refreshToken);
+
+        if (!result.Status) return BadRequest(result);
+        
+        return Ok(result);
     }
 }

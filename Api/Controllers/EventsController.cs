@@ -20,7 +20,7 @@ public class EventsController : ControllerBase
     }
 
     [HttpGet("{id}",Name = "GetEvent")]
-    public async Task<IActionResult> Get(int id)
+    public async Task<IActionResult> GetEvent(int id)
     {
         var result = await _eventService.GetEventByIdAsync(id);
         if (result.Status)
@@ -30,7 +30,7 @@ public class EventsController : ControllerBase
         return NotFound(result);
     }
     [HttpGet(Name = "GetEvents")]
-    public async Task<IActionResult> Get([FromQuery] EventFormQuery query)
+    public async Task<IActionResult> GetEvents([FromQuery] EventFormQuery query)
     {
         var result = await _eventService.GetEventsAsync(query);
         if (result.Status)
@@ -40,17 +40,17 @@ public class EventsController : ControllerBase
         return NotFound(result);
     }
     [HttpPost(Name = "CreateEvent")]
-    public async Task<IActionResult> Post([FromBody] CreateEventDTO data)
+    public async Task<IActionResult> CreateEvent([FromBody] CreateEventDTO data)
     {
         var result = await _eventService.CreateEventAsync(data);
         if (result.Status)
         {
-            return CreatedAtRoute(nameof(Get), result.Data);
+            return CreatedAtRoute(nameof(GetEvent), result.Data);
         }
         return BadRequest(result);
     }
     [HttpDelete(Name = "DeleteEvent")]
-    public async Task<IActionResult> Delete(int id)
+    public async Task<IActionResult> DeleteEvent(int id)
     {
         var result = await _eventService.DeleteEventAsync(id);
 
