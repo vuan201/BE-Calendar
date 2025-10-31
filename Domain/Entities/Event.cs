@@ -5,7 +5,7 @@ using Domain.Enums.Event;
 namespace Domain.Entities;
 
 [Table("Events")]
-// *[Index(nameof(Id))]
+// * [Index(nameof(Id))]
 public class Event : EntityBase
 {
     [Key]

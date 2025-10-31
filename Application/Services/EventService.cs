@@ -72,12 +72,12 @@ public class EventService : IEventService
 
     public async Task<ViewModel<List<EventDTO>>> GetEventsAsync(EventFormQuery query)
     {
-        // *Lọc dữ liệu theo các điều kiện được truyền vào
+        // * Lọc dữ liệu theo các điều kiện được truyền vào
         var filter = PredicateBuilder.New<Event>(true);
 
         if (query.FormDate.HasValue || query.ToDate.HasValue)
         {
-            // *Chỉ lấy giờ UTC
+            // * Chỉ lấy giờ UTC
             if (query.FormDate != null)
             {
                 filter.And(e => e.StartDate >= query.FormDate);

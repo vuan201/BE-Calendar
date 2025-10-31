@@ -29,14 +29,14 @@ public class AuthService : IAuthService
         var user = await _userManager.FindByNameAsync(login.UserName);
         if (user != null && await _userManager.CheckPasswordAsync(user, login.Password))
         {
-            // *Lấy Roles và tạo Access Token
+            // * Lấy Roles và tạo Access Token
             var userRole = await _userManager.GetRolesAsync(user);
             var accessToken = _tokenService.CreateAccessToken(user, userRole);
 
-            // *Tạo Refresh Token và lưu vào DB (Thời gian dài)
+            // * Tạo Refresh Token và lưu vào DB (Thời gian dài)
             var refreshToken = _tokenService.CreateRefreshToken();
 
-            // *Lưu Refresh Token vào DB
+            // * Lưu Refresh Token vào DB
             var token = new Token
             {
                 UserId = user.Id,
@@ -101,14 +101,14 @@ public class AuthService : IAuthService
         token.IsRevoked = true;
         await _tokenRepository.SaveChangesAsync();
 
-        // *Lấy Roles và tạo Access Token
+        // * Lấy Roles và tạo Access Token
         var userRole = await _userManager.GetRolesAsync(user);
         var accessToken = _tokenService.CreateAccessToken(user, userRole);
 
-        // *Tạo Refresh Token và lưu vào DB (Thời gian dài)
+        // * Tạo Refresh Token và lưu vào DB (Thời gian dài)
         var newRefreshToken = _tokenService.CreateRefreshToken();
 
-        // *Lưu Refresh Token vào DB
+        // * Lưu Refresh Token vào DB
         var newToken = new Token
         {
             UserId = user.Id,
@@ -149,10 +149,10 @@ public class AuthService : IAuthService
         // * Tạo access token
         var accessToken = _tokenService.CreateAccessToken(user, new List<string> { Roles.User });
 
-        // *Tạo Refresh Token và lưu vào DB (Thời gian dài)
+        // * Tạo Refresh Token và lưu vào DB (Thời gian dài)
         var refreshToken = _tokenService.CreateRefreshToken();
 
-        // *Lưu Refresh Token vào DB
+        // * Lưu Refresh Token vào DB
         var token = new Token
         {
             UserId = user.Id,

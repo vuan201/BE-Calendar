@@ -21,7 +21,7 @@ public class TokenService : ITokenService
 
     public string CreateAccessToken(ApplicationUser user, IList<string> roles)
     {
-        // *1. Định nghĩa Claims (User ID, Username, Roles...)
+        // * 1. Định nghĩa Claims (User ID, Username, Roles...)
         var authClaims = new List<Claim>
         {
             // * ID của User
@@ -37,10 +37,10 @@ public class TokenService : ITokenService
         // * Thêm các vai trò của User vào trong claims
         authClaims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-        // *2. Cấu hình Key và Thuật toán
+        // * 2. Cấu hình Key và Thuật toán
         var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:Secret"] ?? ""));
 
-        // *3. Tạo Access Token (Thời gian ngắn)
+        // * 3. Tạo Access Token (Thời gian ngắn)
         var token = new JwtSecurityToken(
             // Nguồn phát hành token
             issuer: _config["JWT:ValidIssuer"],

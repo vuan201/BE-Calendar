@@ -41,8 +41,8 @@ public class AuthController : ControllerBase
 
         return Ok();
     }
-    [HttpPost("GetAccessToken", Name = "GetAccessToken")]
-    public async Task<IActionResult> GetAccessToken([FromHeader] string refreshToken)
+    [HttpGet("GetAccessToken", Name = "GetAccessToken")]
+    public async Task<IActionResult> GetAccessToken([FromQuery] string refreshToken)
     {
         var result = await _authService.GetAccessToken(refreshToken);
 

@@ -1,3 +1,7 @@
+@refresh_token = vnk1vfhHxzRAYxtzqNNt0wzP3caVxMNzfURR2Ywh8y8=
+@access_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjYwNzU5ZmNmLTdmODMtNGQ4Yi1iY2EwLTQ4OTMyOThhZWY1MiIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ2dWFuMjAxIiwianRpIjoiY2UxODJhNGQtYmU5OC00MWVhLTliMGYtZTg4OTk3ZDE4NWNjIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImV4cCI6MTc2MTg5NTQ5MSwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzAxNiJ9.mbY61e4XUhHVSwqlZaK3hvgO8G1UVN1tk004Ne3Pg0I
+@expires_time = 1764486591
+### Register
 POST https://localhost:7016/Api/Auth/Register
 Content-Type: application/json
 
@@ -11,7 +15,7 @@ Content-Type: application/json
     "Address": "Hà nội"
 }
 
-###
+### Login
 POST https://localhost:7016/Api/Auth/Login
 Content-Type: application/json
 
@@ -19,3 +23,6 @@ Content-Type: application/json
     "UserName": "vuan201",
     "Password": "Phagame@123"
 }
+
+### Get Access Token
+GET https://localhost:7016/Api/Auth/GetAccessToken?refreshToken={{refresh_token}}
