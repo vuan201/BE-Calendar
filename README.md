@@ -11,24 +11,9 @@
    dotnet restore
    ```
 2. **Tạo tệp cấu hình ứng dụng**
-   Tạo hoặc cập nhật `Api/appsettings.json` và `Api/appsettings.Development.json` với chuỗi kết nối SQL Server của bạn.
-   ```json
-   {
-     "AppSetting": {
-       "Connections": {
-         "SqlServerConnectionString": "Server=localhost;Database=CalendarApi;Uid=sa;Pwd=123456;Trusted_Connection=True"
-       }
-     },
-     "Logging": {
-       "LogLevel": {
-         "Default": "Information",
-         "Microsoft.AspNetCore": "Warning"
-       }
-     },
-     "AllowedHosts": "*"
-   }
-   ```
-   Điều chỉnh `SqlServerConnectionString` cho phù hợp với môi trường của bạn.
+   Sao chép `Api/appsettings.template.json` thành `Api/appsettings.json` và `Api/appsettings.Development.json`, sau đó cập nhật các giá trị cấu hình cho phù hợp với môi trường của bạn.
+
+   **Lưu ý quan trọng**: Không commit các tệp `appsettings.json` và `appsettings.Development.json` vào git vì chúng chứa thông tin nhạy cảm. Các tệp này đã được thêm vào `.gitignore`.
 3. **Tạo migration khởi đầu**
    ```bash
    dotnet ef migrations add InitialCreate --project Infrastructure --startup-project Api --output-dir DataAccess/Migrations
