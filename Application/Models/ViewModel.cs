@@ -4,8 +4,8 @@ namespace Application.Models;
 
 public class ViewModel
 {
-    public string Message { get; set; } = string.Empty;
-    public bool Status { get; set; } = true;
+    public string Message { get; set; }
+    public bool Status { get; set; }
     public ViewModel(bool status, string message)
     {
         Status = status;

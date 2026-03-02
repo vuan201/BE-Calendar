@@ -1,0 +1,35 @@
+@refresh_token = GF0twwwFSj+ZJrqjr2u+XOTPEoHGM5jDzSCD5qQcYyU=
+@access_token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6ImZhOGZkMjY2LTRmOTEtNGViNi05NWRkLTQ4Zjc2OTJjOWVkZSIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJ2dWFuMjAxIiwianRpIjoiZGUxYTE5NjctZDUxMy00NzNjLThlZDgtNTc2NGZmM2UwYjllIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiU3VwcGVyQWRtaW4iLCJleHAiOjE3NzI0MjM5MDcsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjcwMTYifQ.0t10dIg1OyBnVjXznp4rkXvr-mD6SFt4WsCtEr8DlWM
+@expires_time = 1764486591
+@baseUrl = https://localhost:7016
+
+### Register
+POST {{baseUrl}}/Api/Auth/Register
+Content-Type: application/json
+
+{
+    "UserName": "vuan201",
+    "Password": "Phagame@123",
+    "Email": "vuan201@gmail.com",
+    "PhoneNumber": "+84905678901",
+    "FirstName": "Vũ",
+    "LastName": "An",
+    "Address": "Hà nội"
+}
+
+### Login
+POST {{baseUrl}}/Api/Auth/Login
+Content-Type: application/json
+
+{
+    "UserName": "vuan201",
+    "Password": "Phagame@123"
+}
+
+### Get Access Token
+GET {{baseUrl}}/Api/Auth/GetAccessToken?refreshToken={{refresh_token}}
+
+### Event
+GET {{baseUrl}}/Api/Events
+Content-Type: application/json
+Authorization: Bearer {{access_token}}

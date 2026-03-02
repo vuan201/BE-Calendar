@@ -22,7 +22,7 @@ public class EventsController : ControllerBase
     [HttpGet("{id}",Name = "GetEvent")]
     public async Task<IActionResult> GetEvent(int id)
     {
-        var result = await _eventService.GetEventByIdAsync(id);
+        var result = await _eventService.GetEventByIdAsync(id, _userService.GetUserId());
         if (result.Status)
         {
             return Ok(result);
@@ -32,7 +32,7 @@ public class EventsController : ControllerBase
     [HttpGet(Name = "GetEvents")]
     public async Task<IActionResult> GetEvents([FromQuery] EventFormQuery query)
     {
-        var result = await _eventService.GetEventsAsync(query);
+        var result = await _eventService.GetEventsAsync(query, _userService.GetUserId());
         if (result.Status)
         {
             return Ok(result);
@@ -42,17 +42,27 @@ public class EventsController : ControllerBase
     [HttpPost(Name = "CreateEvent")]
     public async Task<IActionResult> CreateEvent([FromBody] CreateEventDTO data)
     {
-        var result = await _eventService.CreateEventAsync(data);
+        var result = await _eventService.CreateEventAsync(data, _userService.GetUserId());
         if (result.Status)
         {
-            return CreatedAtRoute(nameof(GetEvent), result.Data);
+            return CreatedAtRoute(nameof(GetEvent), new { id = result.Data?.Id }, result);
         }
         return BadRequest(result);
     }
-    [HttpDelete(Name = "DeleteEvent")]
+    [HttpPut("{id}", Name = "UpdateEvent")]
+    public async Task<IActionResult> UpdateEvent(int id, [FromBody] CreateEventDTO data)
+    {
+        var result = await _eventService.UpdateEventAsync(id, data, _userService.GetUserId());
+        if (result.Status)
+        {
+            return Ok(result);
+        }
+        return BadRequest(result);
+    }
+    [HttpDelete("{id}", Name = "DeleteEvent")]
     public async Task<IActionResult> DeleteEvent(int id)
     {
-        var result = await _eventService.DeleteEventAsync(id);
+        var result = await _eventService.DeleteEventAsync(id, _userService.GetUserId());
 
         if (result.Status)
         {

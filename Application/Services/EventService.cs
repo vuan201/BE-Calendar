@@ -22,22 +22,41 @@ public class EventService : IEventService
         _eventRepository = eventRepository;
     }
 
-    public async Task<ViewModel<EventDTO>> CreateEventAsync(CreateEventDTO eventDto)
+    public async Task<ViewModel<EventDTO>> CreateEventAsync(CreateEventDTO eventDto, string? userId)
     {
         try
         {
-            using (var reader = new StreamReader(eventDto.RecurrenceRule))
+            if (string.IsNullOrEmpty(eventDto.RecurrenceRule))
             {
-                var calendar = Calendar.Load(reader);
-                if (calendar != null)
-                {
-                    var newEvent = _mapper.Map<Event>(eventDto);
-                    await _eventRepository.CreateAsync(newEvent);
-                    await _eventRepository.SaveChangesAsync();
+                var newEvent = _mapper.Map<Event>(eventDto);
+                newEvent.UserId = userId;
+                await _eventRepository.CreateAsync(newEvent);
+                await _eventRepository.SaveChangesAsync();
 
-                    return new ViewModel<EventDTO>(true, "Event created successfully.", _mapper.Map<EventDTO>(newEvent), 1);
+                return new ViewModel<EventDTO>(true, "Event created successfully.", _mapper.Map<EventDTO>(newEvent), 1);
+            }
+
+            using (var reader = new StringReader(eventDto.RecurrenceRule))
+            {
+                // * Thử tải xem đó có phải là chuỗi lịch đầy đủ hay chỉ là quy tắc.
+                var icalString = eventDto.RecurrenceRule.Contains("BEGIN:VCALENDAR") 
+                    ? eventDto.RecurrenceRule 
+                    : $"BEGIN:VCALENDAR\r\nBEGIN:VEVENT\r\nRRULE:{eventDto.RecurrenceRule}\r\nEND:VEVENT\r\nEND:VCALENDAR";
+                
+                using (var icalReader = new StringReader(icalString))
+                {
+                    var calendar = Calendar.Load(icalReader);
+                    if (calendar != null)
+                    {
+                        var newEvent = _mapper.Map<Event>(eventDto);
+                        newEvent.UserId = userId;
+                        await _eventRepository.CreateAsync(newEvent);
+                        await _eventRepository.SaveChangesAsync();
+
+                        return new ViewModel<EventDTO>(true, "Event created successfully.", _mapper.Map<EventDTO>(newEvent), 1);
+                    }
+                    throw new Exception("Invalid recurrence rule format.");
                 }
-                throw new Exception("Invalid recurrence rule format.");
             }
         }
         catch (Exception ex)
@@ -46,9 +65,31 @@ public class EventService : IEventService
         }
     }
 
-    public async Task<ViewModel> DeleteEventAsync(int id)
+    public async Task<ViewModel<EventDTO>> UpdateEventAsync(int id, CreateEventDTO eventDto, string? userId)
     {
-        var oldEvent = await _eventRepository.GetAsync(i => i.Id == id);
+        try
+        {
+            var oldEvent = await _eventRepository.GetAsync(i => i.Id == id && i.UserId == userId);
+            if (oldEvent == null)
+            {
+                return new ViewModel<EventDTO>(false, "Event not found or access denied.");
+            }
+
+            _mapper.Map(eventDto, oldEvent);
+            _eventRepository.Update(oldEvent);
+            await _eventRepository.SaveChangesAsync();
+
+            return new ViewModel<EventDTO>(true, "Event updated successfully.", _mapper.Map<EventDTO>(oldEvent), 1);
+        }
+        catch (Exception ex)
+        {
+            return new ViewModel<EventDTO>(false, ex.Message);
+        }
+    }
+
+    public async Task<ViewModel> DeleteEventAsync(int id, string? userId)
+    {
+        var oldEvent = await _eventRepository.GetAsync(i => i.Id == id && (string.IsNullOrEmpty(userId) || i.UserId == userId));
 
         if (oldEvent != null)
         {
@@ -57,12 +98,12 @@ public class EventService : IEventService
             return new ViewModel(true, "Delete event success");
         }
 
-        return new ViewModel(false, "Delete event failed");
+        return new ViewModel(false, "Delete event failed or access denied");
     }
 
-    public async Task<ViewModel<EventDTO>> GetEventByIdAsync(int id)
+    public async Task<ViewModel<EventDTO>> GetEventByIdAsync(int id, string? userId)
     {
-        var result = await _eventRepository.GetAsync(i => i.Id == id);
+        var result = await _eventRepository.GetAsync(i => i.Id == id && (string.IsNullOrEmpty(userId) || i.UserId == userId));
         if (result is not null)
         {
             return new ViewModel<EventDTO>(true, "Get data success", _mapper.Map<EventDTO>(result), 1);
@@ -70,10 +111,15 @@ public class EventService : IEventService
         return new ViewModel<EventDTO>(false, "Get data failed");
     }
 
-    public async Task<ViewModel<List<EventDTO>>> GetEventsAsync(EventFormQuery query)
+    public async Task<ViewModel<List<EventDTO>>> GetEventsAsync(EventFormQuery query, string? userId)
     {
         // * Lọc dữ liệu theo các điều kiện được truyền vào
         var filter = PredicateBuilder.New<Event>(true);
+
+        if (!string.IsNullOrEmpty(userId))
+        {
+            filter.And(e => e.UserId == userId);
+        }
 
         if (query.FormDate.HasValue || query.ToDate.HasValue)
         {

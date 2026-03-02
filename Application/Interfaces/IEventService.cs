@@ -6,8 +6,9 @@ namespace Application.Interfaces;
 
 public interface IEventService
 {
-    Task<ViewModel<EventDTO>> CreateEventAsync(CreateEventDTO eventDto);
-    Task<ViewModel> DeleteEventAsync(int id);
-    Task<ViewModel<EventDTO>> GetEventByIdAsync(int id);
-    Task<ViewModel<List<EventDTO>>> GetEventsAsync(EventFormQuery query);
+    Task<ViewModel<EventDTO>> CreateEventAsync(CreateEventDTO eventDto, string? userId);
+    Task<ViewModel<EventDTO>> UpdateEventAsync(int id, CreateEventDTO eventDto, string? userId);
+    Task<ViewModel> DeleteEventAsync(int id, string? userId);
+    Task<ViewModel<EventDTO>> GetEventByIdAsync(int id, string? userId);
+    Task<ViewModel<List<EventDTO>>> GetEventsAsync(EventFormQuery query, string? userId);
 }

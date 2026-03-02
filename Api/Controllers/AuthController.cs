@@ -9,9 +9,24 @@ namespace Api.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authService;
-    public AuthController(IAuthService authService)
+    private readonly IUserService _userService;
+    public AuthController(IAuthService authService, IUserService userService)
     {
         _authService = authService;
+        _userService = userService;
+    }
+
+    [HttpGet("GetUserInfo", Name = "GetUserInfo")]
+    public async Task<IActionResult> GetUserInfo()
+    {
+        var userName = _userService.GetUserName();
+        if (string.IsNullOrEmpty(userName)) return BadRequest("User not found");
+
+        var result = await _userService.GetUserInfomation(userName);
+
+        if (!result.Status) return BadRequest(result);
+
+        return Ok(result);
     }
 
     [HttpPost("Login", Name = "Login")]

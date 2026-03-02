@@ -1,3 +1,4 @@
+using Api;
 using Domain.ValueObjects;
 using Infrastructure;
 
@@ -21,6 +22,18 @@ builder.Services.AddRepositories();
 
 builder.Services.AddControllers();
 
+// * Cấu hình CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
 // * Tìm hiểu thêm về cách cấu hình OpenAPI tại https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
@@ -31,6 +44,8 @@ builder.Services.AddHttpContextAccessor();
 builder.Logging.AddConsole().SetMinimumLevel(LogLevel.Debug);
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.AutoMigrations().GetAwaiter().GetResult();
 
@@ -49,6 +64,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowAll");
 
 app.UseAuthentication();
 app.UseAuthorization();
