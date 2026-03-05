@@ -12,7 +12,7 @@ obj/
 
 # Configuration files
 appsettings.json
-appsettings.development.json
+appsettings.Development.json
 
 # Logs
 *.log
